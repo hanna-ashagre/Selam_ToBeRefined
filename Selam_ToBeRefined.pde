@@ -35,6 +35,7 @@ boolean isNewPatient (String phoneNumber) {
   int rIndex = mainTable.findRowIndex (phoneNumber, 0);
   if (rIndex == -1){
     return 
+    //comment
 }
 
 void setup() {

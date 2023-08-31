@@ -1,6 +1,6 @@
 import static javax.swing.JOptionPane.*;
 import java.time.LocalDate;
-
+///comment
 String nameofcenter= "Bishoftu General Hospital";
 String choose; 
 String phoneNumber;
@@ -19,91 +19,52 @@ Table mainTable, queueTable;
 File queue;
 
 String getFormattedDate () {
-  return year () +"-"+ (month () < 10? "0" + month () : month()) +"-"+( day () <10?"0"+ day():day());
+  return year () +"_"+ (month () < 10? "0" + month () : month()) +"_"+( day () <10?"0"+ day():day());
 }
 
 Table checkAndLoadTable (String path) {
   File file = new File (path);
+  
   if (file.exists ()) {
     return loadTable (path, "header");
   } else {
-    return new Table ();
+    Table table = new Table ();
+    saveTable (table, path);
+    return table;
   }
 }
 
 boolean isNewPatient (String phoneNumber) {
-  int rIndex = mainTable.findRowIndex (phoneNumber, 0);
-  if (rIndex == -1){
-    return 
-    //comment
+  int phoneIndex = mainTable.findRowIndex (phoneNumber, 0);
+  if (phoneIndex == -1) {
+    return true;
+  } else {
+    return false;
+  }
+  //comment
 }
 
 void setup() {
   dateStamp = getFormattedDate ();
 
-  mainTablePath="Patients.csv";
-  queuePath = "Sequence_"+dateStamp+".csv";
+  mainTablePath=dataPath ("") +"/Patients.csv";
+  queuePath = dataPath ("") +"/Sequence_"+dateStamp+".csv";
 
   mainTable = checkAndLoadTable (mainTablePath);
   queueTable = checkAndLoadTable (queuePath);
 
-  choose=showInputDialog("Well Come To "+nameofcenter+" \n 1. card = 50 birr\n2. detail");
+  choose=showInputDialog("Welcom To "+nameofcenter+" \n 1. card = 50 birr\n2. detail");
   if (choose.equals ("1") || choose.equals ("2")) {
     if (int(choose)==1) {
       phoneNumber = showInputDialog("Please enter your phone number \n For Ethiotelecom start from 9\n For Safaricom start from 7 ");      
-      boolean isNew = ;
+
+      // phoneNumber=isNewPatient(phoneNumber);
+
+      if (isNewPatient(phoneNumber) == true) {
 
 
-      if (isNew == false) { 
-        String datepay=mainTable.getRow(rIndex).getString("date");
-        int diff = diffBetween ( datepay, dateStamp );
-
-        println ( "the day difference is:", diff);
-        if (diff<=5) {
-          name =mainTable.getRow(rIndex).getString("Name");
-          age =mainTable.getRow(rIndex).getString("Age");
-          address =mainTable.getRow(rIndex).getString("Address");
-          sex =mainTable.getRow(rIndex).getString("Sex");
-          phoneNumber =mainTable.getRow(rIndex).getString("Phone number");
-          mainTable.getRow(rIndex).setString ("date", dateStamp);
-          String date =dateStamp;
-          saveTable (mainTable, mainTablePath);
-
-          save_patient_info(queueTable, phoneNumber, name, address, age, sex, date, queuePath);
-          println(queueTable.getString(0, 0));
-          int  order=queueTable.findRowIndex(name, 1);
-          showMessageDialog(null, "Payment Is Success.there are "+order+"  registrants before you");
-        } else {
-
-          showMessageDialog(null, "to register please pay 50ETB by telebirr.Then send the transaction code ");
-
-          String validt="ABC";
-          String tranc=showInputDialog("Please Enter Transaction code");
-          tranc=tranc.toUpperCase();
-          if (tranc.equals(validt)) {
-
-            //  println (yearof);
-
-            name =mainTable.getRow(rIndex).getString("Name");
-            age =mainTable.getRow(rIndex).getString("Age");
-            address =mainTable.getRow(rIndex).getString("Address");
-            sex =mainTable.getRow(rIndex).getString("Sex");
-            phoneNumber =mainTable.getRow(rIndex).getString("Phone number");
-            mainTable.getRow(rIndex).setString ("date", dateStamp);
-            String date =dateStamp;
-            saveTable (mainTable, mainTablePath);
-
-            save_patient_info(queueTable, phoneNumber, name, address, age, sex, date, queuePath);
-            println(queueTable.getString(0, 0));
-            int  order=queueTable.findRowIndex(name, 1);
-            showMessageDialog(null, "Payment Is Success.there are "+order+"  registrants before you");
-          } else {
-            showMessageDialog(null, "error tansaction code");
-          }
-        }
-      } else {
         // New patients (isNew true)
-        // phoneNumber =showInputDialog("please enter your phoneNumber \n For Ethiotelecom start from 9\n For Safaricom start from 7 "); 
+        // phoneNumber =showInputDialog("please enter your phoneNumber \n For Ethiotelecom start from 9\n For Safaricom start from 7 ");     
         name =showInputDialog("Please enter your full name ");
         address =showInputDialog("Please enter your address ");
         age=showInputDialog("Please enter your age ");
@@ -130,6 +91,56 @@ void setup() {
           showMessageDialog(null, "error tansaction code");
         }
       }
+      // new patient is true
+      else {
+        int phoneIndex = mainTable.findRowIndex (phoneNumber, 0);
+        String datepay=mainTable.getRow(phoneIndex).getString("date");
+        int diff = diffBetween ( datepay, dateStamp );
+
+        println ( "the day difference is:", diff);
+        if (diff<=5) {
+          name =mainTable.getRow(phoneIndex).getString("Name");
+          age =mainTable.getRow(phoneIndex).getString("Age");
+          address =mainTable.getRow(phoneIndex).getString("Address");
+          sex =mainTable.getRow(phoneIndex).getString("Sex");
+          phoneNumber =mainTable.getRow(phoneIndex).getString("Phone number");
+          mainTable.getRow(phoneIndex).setString ("date", dateStamp);
+          String date =dateStamp;
+          saveTable (mainTable, mainTablePath);
+
+          save_patient_info(queueTable, phoneNumber, name, address, age, sex, date, queuePath);
+          println(queueTable.getString(0, 0));
+          int  order=queueTable.findRowIndex(name, 1);
+          showMessageDialog(null, "Payment Is Success.there are "+order+"  registrants before you");
+        } else {
+
+          showMessageDialog(null, "to register please pay 50ETB by telebirr.Then send the transaction code ");
+
+          String validt="ABC";
+          String tranc=showInputDialog("Please Enter Transaction code");
+          tranc=tranc.toUpperCase();
+          if (tranc.equals(validt)) {
+
+            //  println (yearof);
+
+            name =mainTable.getRow(phoneIndex).getString("Name");
+            age =mainTable.getRow(phoneIndex).getString("Age");
+            address =mainTable.getRow(phoneIndex).getString("Address");
+            sex =mainTable.getRow(phoneIndex).getString("Sex");
+            phoneNumber =mainTable.getRow(phoneIndex).getString("Phone number");
+            mainTable.getRow(phoneIndex).setString ("date", dateStamp);
+            String date =dateStamp;
+            saveTable (mainTable, mainTablePath);
+
+            save_patient_info(queueTable, phoneNumber, name, address, age, sex, date, queuePath);
+            println(queueTable.getString(0, 0));
+            int  order=queueTable.findRowIndex(name, 1);
+            showMessageDialog(null, "Payment Is Success.there are "+order+"  registrants before you");
+          } else {
+            showMessageDialog(null, "error tansaction code");
+          }
+        }
+      }
     } else if (int(choose)==2) {
       String  detail=showInputDialog("1. address\n2. service");
 
@@ -145,10 +156,11 @@ void setup() {
       showMessageDialog(null, "please enter correct number");
     }
   }
-} // void setup
+}
+// void setup
 
 void save_patient_info(Table table, String  phonenumber, String name, String address, String age, String sex, String date, String path ) {
-  if (path.equals(mainTablePath)||(queue.exists())&&path.equals(queuePath)) {
+  if (path.equals(mainTablePath) || path.equals(queuePath)) {
     //println ("Here 1", path);
     TableRow new_info = table.addRow();
     new_info.setString("Phone number", phonenumber);
@@ -162,7 +174,7 @@ void save_patient_info(Table table, String  phonenumber, String name, String add
   } else {
     println (dateStamp);
     //println ("Here 2", path);
-    //sequenceTable=new Table();
+    //sequenceTable=new Table();E
     TableRow new_info=table.addRow();
     new_info.setString("Phone number", phonenumber);
     new_info.setString("Name", name);
@@ -173,10 +185,16 @@ void save_patient_info(Table table, String  phonenumber, String name, String add
     saveTable(table, path );
   }
 }
+
 int diffBetween (String prev, String today) {
   println(prev);
   println(today);
-
+  prev = prev.replace ("_", "-");
+  today = today.replace("_","-");
+  
+ println(prev);
+  println(today);
+ 
   LocalDate prevDate = LocalDate.parse (prev);
   LocalDate currDate = LocalDate.parse (today);
 
